@@ -1,6 +1,6 @@
 <h1 align="center">💸 Wallet - Expense Tracker with React Native & Express 🚀</h1>
 
-![Demo App](/mobile/assets/images/screenshot-for-readme.png)
+![Demo App](/mobile/assets/images/revenue-i4.png)
 
 ## 🎯 What You'll Build
 
