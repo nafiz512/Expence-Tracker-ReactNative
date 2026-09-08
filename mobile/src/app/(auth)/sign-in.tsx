@@ -2,20 +2,21 @@ import { useSignIn } from '@clerk/clerk-expo'
 import type { EmailCodeFactor } from '@clerk/types'
 import { Link, useRouter } from 'expo-router'
 import * as React from 'react'
+import { useCallback, useState } from 'react'
 import { Image, Pressable, Text, TextInput, View } from 'react-native'
 
 export default function Page() {
     const { signIn, setActive, isLoaded } = useSignIn()
     const router = useRouter()
 
-    const [emailAddress, setEmailAddress] = React.useState('')
-    const [password, setPassword] = React.useState('')
-    const [code, setCode] = React.useState('')
-    const [showEmailCode, setShowEmailCode] = React.useState(false)
-    const [error, setError] = React.useState('')
+    const [emailAddress, setEmailAddress] = useState('')
+    const [password, setPassword] = useState('')
+    const [code, setCode] = useState('')
+    const [showEmailCode, setShowEmailCode] = useState(false)
+    const [error, setError] = useState('')
 
     // Handle the submission of the sign-in form
-    const onSignInPress = React.useCallback(async () => {
+    const onSignInPress = useCallback(async () => {
         if (!isLoaded) return
         setError('')
 
