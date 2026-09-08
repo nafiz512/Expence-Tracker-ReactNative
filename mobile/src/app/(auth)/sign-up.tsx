@@ -1,20 +1,21 @@
 import { useSignUp } from '@clerk/clerk-expo'
 import { Link, useRouter } from 'expo-router'
-import * as React from 'react'
+import { useState } from 'react'
 import { Image, Pressable, Text, TextInput, View } from 'react-native'
 
 export default function Page() {
     const { isLoaded, signUp, setActive } = useSignUp()
     const router = useRouter()
-
-    const [emailAddress, setEmailAddress] = React.useState('')
-    const [password, setPassword] = React.useState('')
-    const [pendingVerification, setPendingVerification] = React.useState(false)
-    const [code, setCode] = React.useState('')
+    const [emailAddress, setEmailAddress] = useState('')
+    const [password, setPassword] = useState('')
+    const [pendingVerification, setPendingVerification] = useState(false)
+    const [code, setCode] = useState('')
+    const [error, setError] = useState('')
 
     // Handle submission of sign-up form
     const onSignUpPress = async () => {
         if (!isLoaded) return
+        setError('')
 
         // Start sign-up process using email and password provided
         try {
@@ -29,16 +30,19 @@ export default function Page() {
             // Set 'pendingVerification' to true to display second form
             // and capture code
             setPendingVerification(true)
-        } catch (err) {
+        } catch (err: any) {
             // See https://clerk.com/docs/guides/development/custom-flows/error-handling
             // for more info on error handling
-            console.error(JSON.stringify(err, null, 2))
+            // console.error(JSON.stringify(err, null, 2))
+            const errorMessage = err?.errors?.[0]?.longMessage || err?.errors?.[0]?.message || 'An error occurred during sign up.'
+            setError(errorMessage)
         }
     }
 
     // Handle submission of verification form
     const onVerifyPress = async () => {
         if (!isLoaded) return
+        setError('')
 
         try {
             // Use the code the user provided to attempt verification
@@ -65,18 +69,19 @@ export default function Page() {
             } else {
                 // If the status is not complete, check why. User may need to
                 // complete further steps.
-                console.error(JSON.stringify(signUpAttempt, null, 2))
+                // console.error(JSON.stringify(signUpAttempt, null, 2))
+                setError('Verification incomplete. Please check your details and try again.')
             }
-        } catch (err) {
+        } catch (err: any) {
             // See https://clerk.com/docs/guides/development/custom-flows/error-handling
             // for more info on error handling
-            console.error(JSON.stringify(err, null, 2))
+            // console.error(JSON.stringify(err, null, 2))
+            const errorMessage = err?.errors?.[0]?.longMessage || err?.errors?.[0]?.message || 'Invalid verification code.'
+            setError(errorMessage)
         }
     }
 
-    if (pendingVerification)
-    // if (true)
-    {
+    if (pendingVerification) {
         return (
             <View className="flex-1 bg-[#FAF6F0] justify-center px-6">
                 <View className="mb-2">
@@ -85,12 +90,23 @@ export default function Page() {
                 <View className="mb-6">
                     <Text className="text-sm text-[#8C827A] text-center">A verification code has been sent to your email.</Text>
                 </View>
+
+                {/* Error Banner */}
+                {!!error && (
+                    <View className="mb-4 p-3 bg-red-100 border border-red-300 rounded-xl">
+                        <Text className="text-red-700 text-sm text-center font-medium">{error}</Text>
+                    </View>
+                )}
+
                 <TextInput
                     className="w-full bg-white border border-[#E6DDD6] rounded-2xl p-4 text-base text-[#3B2820] mb-4"
                     value={code}
                     placeholder="Enter your verification code"
                     placeholderTextColor="#A89F91"
-                    onChangeText={(code) => setCode(code)}
+                    onChangeText={(code) => {
+                        setCode(code)
+                        if (error) setError('')
+                    }}
                     keyboardType="numeric"
                 />
                 <Pressable
@@ -119,13 +135,23 @@ export default function Page() {
 
             {/* Form */}
             <View className="w-full flex flex-col gap-3">
+                {/* Error Banner */}
+                {!!error && (
+                    <View className="p-3 bg-red-100 border border-red-300 rounded-xl mb-1">
+                        <Text className="text-red-700 text-sm text-center font-medium">{error}</Text>
+                    </View>
+                )}
+
                 <TextInput
                     className="w-full bg-white border border-[#E6DDD6] rounded-2xl p-4 text-base text-[#3B2820]"
                     autoCapitalize="none"
                     value={emailAddress}
                     placeholder="Enter email"
                     placeholderTextColor="#A89F91"
-                    onChangeText={(email) => setEmailAddress(email)}
+                    onChangeText={(email) => {
+                        setEmailAddress(email)
+                        if (error) setError('')
+                    }}
                     keyboardType="email-address"
                 />
                 <TextInput
@@ -134,7 +160,10 @@ export default function Page() {
                     placeholder="Enter password"
                     placeholderTextColor="#A89F91"
                     secureTextEntry={true}
-                    onChangeText={(password) => setPassword(password)}
+                    onChangeText={(password) => {
+                        setPassword(password)
+                        if (error) setError('')
+                    }}
                 />
                 <Pressable
                     className={`w-full bg-[#8B5A3C] rounded-2xl py-4 items-center mt-2 ${!emailAddress || !password ? 'opacity-60' : 'active:opacity-80'
