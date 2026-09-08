@@ -2,7 +2,7 @@ import { useSignIn } from '@clerk/clerk-expo'
 import type { EmailCodeFactor } from '@clerk/types'
 import { Link, useRouter } from 'expo-router'
 import * as React from 'react'
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Image, Pressable, Text, TextInput, View } from 'react-native'
 
 export default function Page() {
     const { signIn, setActive, isLoaded } = useSignIn()
@@ -12,10 +12,12 @@ export default function Page() {
     const [password, setPassword] = React.useState('')
     const [code, setCode] = React.useState('')
     const [showEmailCode, setShowEmailCode] = React.useState(false)
+    const [error, setError] = React.useState('')
 
     // Handle the submission of the sign-in form
     const onSignInPress = React.useCallback(async () => {
         if (!isLoaded) return
+        setError('')
 
         // Start the sign-in process using the email and password provided
         try {
@@ -60,17 +62,21 @@ export default function Page() {
                 // If the status is not complete, check why. User may need to
                 // complete further steps.
                 console.error(JSON.stringify(signInAttempt, null, 2))
+                setError('Sign-in incomplete. Please check your credentials.')
             }
-        } catch (err) {
+        } catch (err: any) {
             // See https://clerk.com/docs/guides/development/custom-flows/error-handling
             // for more info on error handling
             console.error(JSON.stringify(err, null, 2))
+            const errorMessage = err?.errors?.[0]?.longMessage || err?.errors?.[0]?.message || 'An error occurred during sign in.'
+            setError(errorMessage)
         }
     }, [isLoaded, signIn, setActive, router, emailAddress, password])
 
     // Handle the submission of the email verification code
     const onVerifyPress = React.useCallback(async () => {
         if (!isLoaded) return
+        setError('')
 
         try {
             const signInAttempt = await signIn.attemptSecondFactor({
@@ -94,133 +100,117 @@ export default function Page() {
                 })
             } else {
                 console.error(JSON.stringify(signInAttempt, null, 2))
+                setError('Verification incomplete. Please try again.')
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error(JSON.stringify(err, null, 2))
+            const errorMessage = err?.errors?.[0]?.longMessage || err?.errors?.[0]?.message || 'Invalid verification code.'
+            setError(errorMessage)
         }
     }, [isLoaded, signIn, setActive, router, code])
 
     // Display email code verification form
     if (showEmailCode) {
         return (
-            <View style={styles.container}>
-                <Text style={styles.title}>
-                    Verify your email
-                </Text>
-                <Text style={styles.description}>
-                    A verification code has been sent to your email.
-                </Text>
+            <View className="flex-1 bg-[#FAF6F0] justify-center px-6">
+                <View className="mb-2">
+                    <Text className="text-2xl font-bold text-[#3B2820] text-center">Verify your email</Text>
+                </View>
+                <View className="mb-6">
+                    <Text className="text-sm text-[#8C827A] text-center">A verification code has been sent to your email.</Text>
+                </View>
+
+                {/* Error Banner */}
+                {!!error && (
+                    <View className="mb-4 p-3 bg-red-100 border border-red-300 rounded-xl">
+                        <Text className="text-red-700 text-sm text-center font-medium">{error}</Text>
+                    </View>
+                )}
+
                 <TextInput
-                    style={styles.input}
+                    className="w-full bg-white border border-[#E6DDD6] rounded-2xl p-4 text-base text-[#3B2820] mb-4"
                     value={code}
                     placeholder="Enter verification code"
-                    placeholderTextColor="#666666"
-                    onChangeText={(code) => setCode(code)}
+                    placeholderTextColor="#A89F91"
+                    onChangeText={(code) => {
+                        setCode(code)
+                        if (error) setError('')
+                    }}
                     keyboardType="numeric"
                 />
                 <Pressable
-                    style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+                    className="w-full bg-[#8B5A3C] rounded-2xl py-4 items-center active:opacity-80"
                     onPress={onVerifyPress}
                 >
-                    <Text style={styles.buttonText}>Verify</Text>
+                    <Text className="text-white font-semibold text-base">Verify</Text>
                 </Pressable>
             </View>
         )
     }
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>
-                Sign in
+        <View className="flex-1 bg-[#FAF6F0] pt-20 items-center px-6">
+            {/* Header Image */}
+            <Image
+                source={require('../../../assets/images/revenue-i4.png')}
+                className="w-64 h-64 mb-6"
+                resizeMode="contain"
+            />
+
+            {/* Title */}
+            <Text className="text-3xl font-bold text-[#3B2820] mb-6">
+                Welcome Back
             </Text>
-            <Text style={styles.label}>Email address</Text>
-            <TextInput
-                style={styles.input}
-                autoCapitalize="none"
-                value={emailAddress}
-                placeholder="Enter email"
-                placeholderTextColor="#666666"
-                onChangeText={(emailAddress) => setEmailAddress(emailAddress)}
-                keyboardType="email-address"
-            />
-            <Text style={styles.label}>Password</Text>
-            <TextInput
-                style={styles.input}
-                value={password}
-                placeholder="Enter password"
-                placeholderTextColor="#666666"
-                secureTextEntry={true}
-                onChangeText={(password) => setPassword(password)}
-            />
-            <Pressable
-                style={({ pressed }) => [
-                    styles.button,
-                    (!emailAddress || !password) && styles.buttonDisabled,
-                    pressed && styles.buttonPressed,
-                ]}
-                onPress={onSignInPress}
-                disabled={!emailAddress || !password}
-            >
-                <Text style={styles.buttonText}>Sign in</Text>
-            </Pressable>
-            <View style={styles.linkContainer}>
-                <Text>Don't have an account? </Text>
+
+            {/* Form */}
+            <View className="w-full flex flex-col gap-3">
+                {/* Error Banner */}
+                {!!error && (
+                    <View className="p-3 bg-red-100 border border-red-300 rounded-xl mb-1">
+                        <Text className="text-red-700 text-sm text-center font-medium">{error}</Text>
+                    </View>
+                )}
+
+                <TextInput
+                    className="w-full bg-white border border-[#E6DDD6] rounded-2xl p-4 text-base text-[#3B2820]"
+                    autoCapitalize="none"
+                    value={emailAddress}
+                    placeholder="Enter email"
+                    placeholderTextColor="#A89F91"
+                    onChangeText={(emailAddress) => {
+                        setEmailAddress(emailAddress)
+                        if (error) setError('')
+                    }}
+                    keyboardType="email-address"
+                />
+                <TextInput
+                    className="w-full bg-white border border-[#E6DDD6] rounded-2xl p-4 text-base text-[#3B2820]"
+                    value={password}
+                    placeholder="Enter password"
+                    placeholderTextColor="#A89F91"
+                    secureTextEntry={true}
+                    onChangeText={(password) => {
+                        setPassword(password)
+                        if (error) setError('')
+                    }}
+                />
+                <Pressable
+                    className={`w-full bg-[#8B5A3C] rounded-2xl py-4 items-center mt-2 ${!emailAddress || !password ? 'opacity-60' : 'active:opacity-80'
+                        }`}
+                    onPress={onSignInPress}
+                    disabled={!emailAddress || !password}
+                >
+                    <Text className="text-white font-semibold text-lg">Sign In</Text>
+                </Pressable>
+            </View>
+
+            {/* Navigation Link */}
+            <View className="flex-row items-center mt-6">
+                <Text className="text-[#8C827A] text-sm">Don't have an account? </Text>
                 <Link href="/sign-up">
-                    <Text >Sign up</Text>
+                    <Text className="text-[#8B5A3C] font-semibold text-sm">Sign up</Text>
                 </Link>
             </View>
         </View>
     )
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 20,
-        gap: 12,
-    },
-    title: {
-        marginBottom: 8,
-    },
-    description: {
-        fontSize: 14,
-        marginBottom: 16,
-        opacity: 0.8,
-    },
-    label: {
-        fontWeight: '600',
-        fontSize: 14,
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 8,
-        padding: 12,
-        fontSize: 16,
-        backgroundColor: '#fff',
-    },
-    button: {
-        backgroundColor: '#0a7ea4',
-        paddingVertical: 12,
-        paddingHorizontal: 24,
-        borderRadius: 8,
-        alignItems: 'center',
-        marginTop: 8,
-    },
-    buttonPressed: {
-        opacity: 0.7,
-    },
-    buttonDisabled: {
-        opacity: 0.5,
-    },
-    buttonText: {
-        color: '#fff',
-        fontWeight: '600',
-    },
-    linkContainer: {
-        flexDirection: 'row',
-        gap: 4,
-        marginTop: 12,
-        alignItems: 'center',
-    },
-})
