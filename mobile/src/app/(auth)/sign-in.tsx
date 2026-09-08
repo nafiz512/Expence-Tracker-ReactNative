@@ -4,6 +4,7 @@ import { Link, useRouter } from 'expo-router'
 import * as React from 'react'
 import { useCallback, useState } from 'react'
 import { Image, Pressable, Text, TextInput, View } from 'react-native'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 export default function Page() {
     const { signIn, setActive, isLoaded } = useSignIn()
@@ -150,7 +151,12 @@ export default function Page() {
     }
 
     return (
-        <View className="flex-1 bg-[#FAF6F0] pt-20 items-center px-6">
+        <KeyboardAwareScrollView
+            className="flex-1 bg-[#FAF6F0]"
+            contentContainerClassName="flex-grow justify-center items-center px-6 py-10"
+            enableOnAndroid={true}
+            extraScrollHeight={2}
+        >
             {/* Header Image */}
             <Image
                 source={require('../../../assets/images/revenue-i4.png')}
@@ -212,6 +218,6 @@ export default function Page() {
                     <Text className="text-[#8B5A3C] font-semibold text-sm">Sign up</Text>
                 </Link>
             </View>
-        </View>
+        </KeyboardAwareScrollView>
     )
 }

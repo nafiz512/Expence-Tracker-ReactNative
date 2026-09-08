@@ -1,6 +1,7 @@
 import { useSignUp } from '@clerk/clerk-expo'
 import { Link, useRouter } from 'expo-router'
 import { useState } from 'react'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { Image, Pressable, Text, TextInput, View } from 'react-native'
 
 export default function Page() {
@@ -120,7 +121,11 @@ export default function Page() {
     }
 
     return (
-        <View className="flex-1 bg-[#FAF6F0] pt-20 items-center px-6">
+        <KeyboardAwareScrollView
+            className="flex-1 bg-[#FAF6F0]"
+            contentContainerClassName="flex-grow justify-center items-center px-6 py-10"
+            enableOnAndroid={true}
+        >
             {/* Header Image */}
             <Image
                 source={require('../../../assets/images/revenue-i2.png')}
@@ -182,6 +187,6 @@ export default function Page() {
                     <Text className="text-[#8B5A3C] font-semibold text-sm">Sign in</Text>
                 </Link>
             </View>
-        </View>
+        </KeyboardAwareScrollView>
     )
 }
