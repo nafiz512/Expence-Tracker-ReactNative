@@ -10,8 +10,7 @@ export default function Page() {
     // If your user isn't appearing as signed in,
     // it's possible they have session tasks to complete.
     // Learn more: https://clerk.com/docs/guides/configure/session-tasks
-    const { session } = useSession()
-    console.log(session?.currentTask)
+    const { session } = useSession();
 
     return (
         <View style={styles.container}>
