@@ -2,8 +2,6 @@ import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { useColorScheme } from 'react-native';
 import "../../global.css"
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-// import { ClerkProvider } from '@clerk/expo'
-// import { tokenCache } from '@clerk/expo/token-cache'
 
 import { ClerkProvider } from '@clerk/clerk-expo'
 import { tokenCache } from '@clerk/clerk-expo/token-cache'

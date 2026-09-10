@@ -1,23 +1,19 @@
 import { SignOutButton } from '@/components/sign-out-button'
+import useTransactions from '@/hooks/useTransactions'
 import { SignedIn, SignedOut, useSession, useUser } from '@clerk/clerk-expo'
 import { Link } from 'expo-router'
-import * as React from 'react'
+import { useEffect } from 'react'
 import { Image, Pressable, ScrollView, Text, View } from 'react-native'
 
 export default function Page() {
     const { user } = useUser()
     const { session } = useSession()
+    const { loading, summary, transactions, loadData, deleteTransaction } = useTransactions("u2i4s5r")
+    useEffect(() => {
+        loadData();
+    }, [])
 
-    // Sample transaction data matching the UI mockup
-    const transactions = [
-        { id: '1', title: 'Rent', category: 'Other', amount: '-$1200.00', date: 'May 17, 2025', isIncome: false, icon: '💬' },
-        { id: '2', title: 'Salary', category: 'Income', amount: '+$2500.00', date: 'May 17, 2025', isIncome: true, icon: '💵' },
-        { id: '3', title: 'Groceries', category: 'Food & Drinks', amount: '-$185.45', date: 'May 17, 2025', isIncome: false, icon: '🛒' },
-        { id: '4', title: 'Phone Bill', category: 'Bills', amount: '-$75.00', date: 'May 17, 2025', isIncome: false, icon: '📄' },
-        { id: '5', title: 'Freelance Work', category: 'Income', amount: '+$300.00', date: 'May 17, 2025', isIncome: true, icon: '💵' },
-        { id: '6', title: 'Salary', category: 'Income', amount: '+$2500.00', date: 'May 17, 2025', isIncome: true, icon: '💵' },
-        { id: '7', title: 'Groceries', category: 'Food & Drinks', amount: '-$185.45', date: 'May 17, 2025', isIncome: false, icon: '🛒' },
-    ]
+
 
     return (
         <View className="flex-1 bg-[#FAF6F0]">
@@ -100,14 +96,14 @@ export default function Page() {
 
                     {/* Transactions List */}
                     <View className="flex flex-col gap-3 pb-12">
-                        {transactions.map((item) => (
+                        {transactions.map((item, index) => (
                             <View
-                                key={item.id}
+                                key={index}
                                 className="bg-white rounded-2xl p-4 flex-row items-center justify-between border border-[#F0EBE6]"
                             >
                                 <View className="flex-row items-center gap-3">
                                     <View className="w-10 h-10 bg-[#FAF6F0] rounded-full items-center justify-center">
-                                        <Text className="text-lg">{item.icon}</Text>
+                                        <Text className="text-lg">icon</Text>
                                     </View>
                                     <View>
                                         <Text className="text-sm font-bold text-[#3B2820]">{item.title}</Text>
