@@ -3,7 +3,17 @@ import useTransactions from '@/hooks/useTransactions'
 import { SignedIn, SignedOut, useSession, useUser } from '@clerk/clerk-expo'
 import { Link } from 'expo-router'
 import { useEffect } from 'react'
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Image, Pressable, ScrollView, Text, View } from 'react-native'
+import { formatDate } from '../../../lib/utils.js'
+
+type transactionType = {
+    amount: number;
+    title: string;
+    created_at: string;
+    category: string;
+}
+type TransactionProps = transactionType[]
 
 export default function Page() {
     const { user } = useUser()
@@ -12,9 +22,7 @@ export default function Page() {
     useEffect(() => {
         loadData();
     }, [])
-
-
-
+    // console.log(user);
     return (
         <View className="flex-1 bg-[#FAF6F0]">
             <SignedOut>
@@ -41,7 +49,7 @@ export default function Page() {
                     <View className="flex-row items-center justify-between mb-6">
                         <View className="flex-row items-center gap-3">
                             <Image
-                                source={require('../../../assets/images/icon.png')}
+                                source={require('../../../assets/images/logo.png')}
                                 className="w-12 h-12 rounded-full"
                                 resizeMode="contain"
                             />
@@ -69,13 +77,13 @@ export default function Page() {
                     {/* Balance Card */}
                     <View className="bg-white rounded-3xl p-6 shadow-sm border border-[#F0EBE6] mb-6">
                         <Text className="text-xs text-[#8C827A] mb-1 font-medium">Total Balance</Text>
-                        <Text className="text-3xl font-extrabold text-[#3B2820] mb-6">$1289.56</Text>
+                        <Text className="text-3xl font-extrabold text-[#3B2820] mb-6">${summary.balance}</Text>
 
                         <View className="flex-row justify-between items-center pt-2">
                             {/* Income */}
                             <View className="flex-1">
                                 <Text className="text-xs text-[#8C827A] mb-1">Income</Text>
-                                <Text className="text-base font-bold text-[#2EC4B6]">+$2800.00</Text>
+                                <Text className="text-base font-bold text-[#2EC4B6]">+${summary.income}</Text>
                             </View>
 
                             {/* Vertical Divider */}
@@ -84,7 +92,7 @@ export default function Page() {
                             {/* Expenses */}
                             <View className="flex-1">
                                 <Text className="text-xs text-[#8C827A] mb-1">Expenses</Text>
-                                <Text className="text-base font-bold text-[#E76F51]">-$1510.44</Text>
+                                <Text className="text-base font-bold text-[#E76F51]">-${summary.expence}</Text>
                             </View>
                         </View>
                     </View>
@@ -96,14 +104,17 @@ export default function Page() {
 
                     {/* Transactions List */}
                     <View className="flex flex-col gap-3 pb-12">
-                        {transactions.map((item, index) => (
+                        {(transactions as TransactionProps).map((item, index) => (
                             <View
                                 key={index}
                                 className="bg-white rounded-2xl p-4 flex-row items-center justify-between border border-[#F0EBE6]"
                             >
                                 <View className="flex-row items-center gap-3">
                                     <View className="w-10 h-10 bg-[#FAF6F0] rounded-full items-center justify-center">
-                                        <Text className="text-lg">icon</Text>
+                                        {
+                                            item.amount > 0 ? <MaterialCommunityIcons name="cash-plus" size={24} color="black" /> : <MaterialCommunityIcons name="cash-minus" size={24} color="black" />
+                                        }
+
                                     </View>
                                     <View>
                                         <Text className="text-sm font-bold text-[#3B2820]">{item.title}</Text>
@@ -114,18 +125,18 @@ export default function Page() {
                                 <View className="flex-row items-center gap-3">
                                     <View className="items-end">
                                         <Text
-                                            className={`text-sm font-bold ${item.isIncome ? 'text-[#2EC4B6]' : 'text-[#E76F51]'
+                                            className={`text-sm font-bold ${item.amount > 0 ? 'text-[#2EC4B6]' : 'text-[#E76F51]'
                                                 }`}
                                         >
                                             {item.amount}
                                         </Text>
-                                        <Text className="text-[10px] text-[#A89F91]">{item.date}</Text>
+                                        <Text className="text-[10px] text-[#A89F91]">{formatDate(item.created_at)}</Text>
                                     </View>
 
                                     {/* Divider & Delete Icon */}
                                     <View className="w-[1px] h-6 bg-[#E6DDD6] ml-1" />
                                     <Pressable className="p-1">
-                                        <Text className="text-xs text-[#E76F51]">🗑️</Text>
+                                        <Text className="text-xl">🗑️</Text>
                                     </Pressable>
                                 </View>
                             </View>

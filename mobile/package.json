@@ -6,6 +6,7 @@
     "@clerk/clerk-expo": "^2.20.0",
     "@clerk/expo": "^4.6.5",
     "@expo/ui": "~57.0.17",
+    "@expo/vector-icons": "^15.1.1",
     "babel-preset-expo": "^57.0.10",
     "expo": "~57.0.21",
     "expo-constants": "~57.0.17",
