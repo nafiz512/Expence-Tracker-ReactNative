@@ -28,8 +28,9 @@ export default function RootLayout() {
             paddingRight: insets.right,
           }
         }}>
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="(home)" options={{ headerShown: false }} />
+        {/* <Stack.Screen name="(home)" options={{ headerShown: false }} />
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} /> */}
+
       </Stack>
     </ThemeProvider>
   </ClerkProvider>;
