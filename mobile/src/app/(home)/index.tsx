@@ -3,7 +3,7 @@ import { SignOutButton } from '@/components/sign-out-button'
 import Summary from '@/components/Summary'
 import { Text } from '@/components/ui/text'
 import useTransactions from '@/hooks/useTransactions'
-import { SignedIn, SignedOut, useAuth, useUser } from '@clerk/clerk-expo'
+import { SignedIn, useUser } from '@clerk/clerk-expo'
 import { router } from 'expo-router'
 import { useEffect } from 'react'
 import { FlatList, Image, Pressable, View } from 'react-native'
@@ -21,11 +21,11 @@ type TransactionProps = transactionType[]
 
 export default function Page() {
     const { user } = useUser()
-    const { loading, summary, transactions, loadData, deleteTransaction } = useTransactions("u2i4s5r");
+    const { loading, summary, transactions, loadData, deleteTransaction } = useTransactions(user?.id ?? '');
     useEffect(() => {
         loadData();
     }, [])
-    // console.log(transactions);
+
     if (loading) {
         return (
             <HeaderLoadingSkeletion></HeaderLoadingSkeletion>
@@ -51,13 +51,11 @@ export default function Page() {
                                 </Text>
                             </View>
                         </View>
-
                         <View className="flex-row items-center gap-2">
                             <Pressable onPress={() => router.push('/(home)/CreateTransaction')} className="bg-[#8B5A3C] dark:bg-[#A06A48] flex-row items-center px-4 py-2.5 rounded-full">
                                 <Text className="text-white font-semibold text-sm mr-1">+</Text>
                                 <Text className="text-white font-semibold text-sm">Add</Text>
                             </Pressable>
-
                             {/* Sign Out Button Wrapper */}
                             <View className="bg-black dark:bg-[#252525] p-2.5 rounded-full border border-[#E6DDD6] dark:border-[#333333]">
                                 <SignOutButton />
