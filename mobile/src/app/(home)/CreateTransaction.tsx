@@ -78,7 +78,7 @@ export default function NewTransactionScreen() {
 
                 <Pressable
                     onPress={handleSave}
-                    className="flex-row items-center gap-1 py-1 px-2 rounded-lg active:opacity-70"
+                    className="flex-row bg-green-200 items-center gap-1 py-2 px-3 rounded-lg active:opacity-70"
                 >
                     <Text className="text-base font-semibold text-[#8B5A3C] dark:text-[#D4A373]">
                         Save
