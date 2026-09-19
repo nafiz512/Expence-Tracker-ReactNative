@@ -3,8 +3,10 @@ import { Redirect, Stack } from 'expo-router'
 
 export default function Layout() {
     const { isSignedIn, isLoaded } = useUser();
+    // console.log(isSignedIn);
 
-    if (!isLoaded) return null; // this is for a better ux
+
+    // if (!isLoaded) return null; // this is for a better ux
 
     if (!isSignedIn) return <Redirect href={"/sign-in"} />;
     return <Stack screenOptions={{ headerShown: false }} />

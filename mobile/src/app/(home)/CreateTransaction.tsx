@@ -1,3 +1,5 @@
+import useTransactions from '@/hooks/useTransactions';
+import { useUser } from '@clerk/clerk-expo';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Feather from '@expo/vector-icons/Feather';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -34,17 +36,27 @@ export default function NewTransactionScreen() {
     const [amount, setAmount] = useState<string>('')
     const [title, setTitle] = useState<string>('')
     const [selectedCategory, setSelectedCategory] = useState<string>('food')
+    const { user } = useUser();
+    const { createTransaction } = useTransactions(user?.id || '')
 
     const handleSave = () => {
+
         const payload = {
-            type,
+            user_id: user?.id || "ok",
             amount: parseFloat(amount) || 0,
             title,
             category: selectedCategory,
         }
-        console.log('Saved Transaction:', payload)
+        if (payload.user_id) {
+
+            if (type == 'expense') {
+                payload.amount *= -1;
+            }
+            createTransaction(payload)
+        }
+        // console.log('Saved Transaction:', payload)
         // Add your submit or navigation logic here
-        if (router.canGoBack()) router.back()
+
     }
 
     return (

@@ -1,5 +1,13 @@
 import { View, Text, Alert } from 'react-native'
 import React, { useCallback, useState } from 'react'
+import { router } from 'expo-router';
+
+type transactionType = {
+    user_id: string;
+    amount: number;
+    title: string;
+    category: string;
+}
 
 const API_URL = "https://wallet-rn-server.onrender.com";
 
@@ -34,7 +42,6 @@ const useTransactions = (user_id: string) => {
         }
     }
     const loadData = useCallback(async () => {
-
         if (!user_id)
             return;
         setLoading(true)
@@ -60,7 +67,35 @@ const useTransactions = (user_id: string) => {
             // Alert.alert("Error", error instanceof Error ? error.message : String(error));
         }
     }
-    return { loading, summary, transactions, loadData, deleteTransaction };
+    const createTransaction = async (body: transactionType) => {
+        if (!user_id)
+            return;
+        try {
+            const res = await fetch(`${API_URL}/api/transaction`,
+                {
+                    method: "Post",
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(body),
+                }
+            )
+            if (!res.ok) {
+                throw new Error(`HTTP error! Status: ${res.status}`);
+            }
+            else {
+                Alert.alert('Success', 'Data sent successfully!');
+            }
+        } catch (error) {
+            Alert.alert('Error', 'Failed to send data. Please try again.');
+            console.log(error);
+        }
+        finally {
+            if (router.canGoBack()) router.back()
+        }
+    }
+    return { loading, summary, transactions, loadData, deleteTransaction, createTransaction };
 }
 
-export default useTransactions
+export default useTransactions;

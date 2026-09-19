@@ -5,8 +5,8 @@ import { Text } from '@/components/ui/text'
 import useTransactions from '@/hooks/useTransactions'
 import { SignedIn, useUser } from '@clerk/clerk-expo'
 import { router } from 'expo-router'
-import { useEffect } from 'react'
-import { FlatList, Image, Pressable, View } from 'react-native'
+import { useEffect, useState } from 'react'
+import { FlatList, Image, Pressable, RefreshControl, View } from 'react-native'
 import NoTransactionsUI from '@/components/NoTransactionsUI'
 import TransitionCard from '@/components/TransitionCard'
 
@@ -22,10 +22,10 @@ type TransactionProps = transactionType[]
 export default function Page() {
     const { user } = useUser()
     const { loading, summary, transactions, loadData, deleteTransaction } = useTransactions(user?.id ?? '');
+
     useEffect(() => {
         loadData();
     }, [])
-
     if (loading) {
         return (
             <HeaderLoadingSkeletion></HeaderLoadingSkeletion>
@@ -64,7 +64,7 @@ export default function Page() {
                     </View>
 
                     {/* summary section */}
-                    <Summary summary={summary}></Summary>
+                    <Summary summary={summary} loadData={loadData}></Summary>
 
                     {/* Recent Transactions Header */}
                     <Text className="text-base font-bold text-[#3B2820] dark:text-[#E0E0E0] mb-3">
