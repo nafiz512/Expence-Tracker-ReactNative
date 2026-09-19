@@ -57,7 +57,7 @@ const useTransactions = (user_id: string) => {
 
         } catch (error) {
             console.error("Error deleting transaction:", error);
-            Alert.alert("Error", error);
+            // Alert.alert("Error", error instanceof Error ? error.message : String(error));
         }
     }
     return { loading, summary, transactions, loadData, deleteTransaction };

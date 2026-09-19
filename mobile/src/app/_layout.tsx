@@ -1,10 +1,10 @@
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { useColorScheme } from 'react-native';
-import "../../global.css"
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import "../../global.css";
 
-import { ClerkProvider } from '@clerk/clerk-expo'
-import { tokenCache } from '@clerk/clerk-expo/token-cache'
+import { ClerkProvider } from '@clerk/clerk-expo';
+import { tokenCache } from '@clerk/clerk-expo/token-cache';
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!
 
@@ -28,8 +28,8 @@ export default function RootLayout() {
             paddingRight: insets.right,
           }
         }}>
-        <Stack.Screen name="(home)" options={{ headerShown: false }} />
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        <Stack.Screen name="(home)" options={{ headerShown: false }} />
       </Stack>
     </ThemeProvider>
   </ClerkProvider>;
