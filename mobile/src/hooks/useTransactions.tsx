@@ -5,9 +5,9 @@ const API_URL = "https://wallet-rn-server.onrender.com";
 
 const useTransactions = (user_id: string) => {
     const [summary, setSummary] = useState({
-        balance: "0",
-        income: "0",
-        expence: "0"
+        balance: 0,
+        income: 0,
+        expence: 0
     })
     const [transactions, setTransactions] = useState([])
     const [loading, setLoading] = useState(true);
@@ -47,7 +47,7 @@ const useTransactions = (user_id: string) => {
         }
     }, [fetchSummary, fetchTransactions, user_id])
 
-    const deleteTransaction = async (id: string) => {
+    const deleteTransaction = async (id: number) => {
         try {
             const res = await fetch(`${API_URL}/api/transaction/${id}`, { method: "DELETE" });
             if (!res.ok) throw new Error("Error in transaction delete");
